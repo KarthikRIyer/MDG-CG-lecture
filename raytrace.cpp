@@ -4,7 +4,7 @@
 #include "vector_math.h"
 
 class Color3 {
-	public: float r,g,b; 
+	public: float r,g,b;
 			Color3(){}
 			Color3(float a, float b, float c):r(a),g(b),b(c){}
 			Color3(Vector3 v):r(v.x),g(v.y),b(v.z){}
@@ -29,10 +29,10 @@ typedef Color3 Radiance3;
 typedef Color3 Power3;
 
 class Ray{
-	private: 
+	private:
 		Point3 m_origin;
 		Vector3 m_direction;
-	public: 
+	public:
 		Ray(Point3 org, Vector3 dir): m_origin(org),m_direction(dir){}
 
 		Point3 origin() const {return m_origin;}
@@ -41,10 +41,10 @@ class Ray{
 
 class Image{
 
-private: 
+private:
 	int m_width;
 	int m_height;
-	std::vector<Radiance3> m_data;	
+	std::vector<Radiance3> m_data;
 
 	int PPMGammaEncode(float radiance,float displayConstant) const;
 
@@ -81,7 +81,7 @@ void Image::save(const std::string& filename,float d) const{
 									  , PPMGammaEncode(c.g, d)
 									  , PPMGammaEncode(c.b, d));
 		}
-	}	
+	}
 	fclose(file);
 }
 
@@ -100,7 +100,7 @@ public:
 };
 
 class Triangle{
-private: 
+private:
 	Point3 m_vertex[3];
 	Vector3 m_normal[3];
 	BSDF m_bsdf;
@@ -194,7 +194,7 @@ float intersectT(Ray& R,const Triangle& T, float weight[3]){
 
 float intersectS(Ray& R, const Sphere& S){
 	//TODO
-	return ;
+	return false;
 }
 
 bool visible(Point3& P, Vector3& direction, float distanceToLight, const Scene& scene){
@@ -229,9 +229,9 @@ void shade(const Scene& scene, Triangle& T,Point3& P, Vector3& n,  Vector3& w_o,
 
 		if(visible(P ,w_i ,distanceToLight ,scene)){
 			Radiance3 L_i = light.power / (4*M_PI*distanceToLight*distanceToLight);
-			
+
 			L_o += (L_i*T.bsdf().evaluateFiniteScatteringDensity(w_i,w_o,n))*std::max(0.0f,w_i.dot(n));
-	
+
 		}
 	}
 
@@ -293,7 +293,7 @@ void rayTrace(Image image , const Scene& scene , const Camera& camera , int x0 ,
 
 void lightScene(Scene& scene){
 
-	
+
 	scene.lightArray.resize(2);
 	scene.lightArray[0].position = Point3(1, 3, 1);
 	scene.lightArray[0].power = Color3(1.0f,1.0f,1.0f)*20.0f;
@@ -321,9 +321,9 @@ void triangleGroundScene(Scene& scene){
 }
 
 int main(){
-	Image image = Image(800,500);
+	Image image = Image(1920,1080);
 	Camera camera;
-	Scene scene = Scene();		
+	Scene scene = Scene();
 	triangleGroundScene(scene);
-	rayTrace(image,scene,camera,0,800,0,500);
+	rayTrace(image,scene,camera,0,1920,0,1080);
 }
